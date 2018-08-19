@@ -31,11 +31,23 @@ class Customer
   end
 
   def films()
-    sql = "SELECT films.* FROM films INNER JOIN tickets ON film.id = films.customer_id WHERE customer_id = $1"
+    sql = "SELECT films.* FROM films INNER JOIN tickets ON film.id = tickets.film_id WHERE customer_id = $2"
     values = [@id]
     film_data = SqlRunner.run(sql, values)
   return Film.map_items(film_data)
   end
+
+  def buy_ticket(film)
+    @funds -= film.price
+  end
+
+  def tickets_bought()
+    sql = "SELECT * FROM customers WHERE customer_id = $1"
+    values = [@id]
+    film_data = SqlRunner.run(sql, values)
+    return Tickets.map_items(results)
+  end
+
 
   def self.all()
     sql = "SELECT * FROM customers"
